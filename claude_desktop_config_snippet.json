@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "mysql": {
+      "command": "node",
+      "args": [
+        "c:/Users/bhave/OneDrive/Desktop/MYSQL MCP Server/build/index.js",
+        "mysql://root:root1234@localhost:3306"
+      ]
+    }
+  }
+}
