@@ -1,17 +1,39 @@
 {
-  "name": "mysql-mcp-server",
+  "name": "@bhaveshrmahajan/mysql-mcp-server",
   "version": "1.0.0",
+  "description": "A Model Context Protocol (MCP) server for inspecting and querying MySQL databases.",
   "type": "module",
   "main": "index.js",
+  "bin": {
+    "mysql-mcp-server": "./dist/index.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "prepublishOnly": "npm run build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": [
+    "mcp",
+    "mysql",
+    "database",
+    "ai",
+    "claude",
+    "llm",
+    "server"
+  ],
+  "author": "Bhavesh Mahajan",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bhaveshrmahajan/mysql-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bhaveshrmahajan/mysql-mcp-server/issues"
+  },
+  "homepage": "https://github.com/bhaveshrmahajan/mysql-mcp-server#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.24.3",
     "mysql2": "^3.15.3",
