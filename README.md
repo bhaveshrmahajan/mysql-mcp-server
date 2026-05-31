@@ -1,6 +1,8 @@
-# MySQL MCP Server
+# MySQL MCP Server (Python & FastAPI)
 
-A powerful **Model Context Protocol (MCP)** server that connects your AI assistant (like **Claude Desktop**) directly to your **MySQL** database. This server enables safe, controlled access to inspect schemas, query data, and even perform administrative tasks, all through natural language.
+A powerful **Model Context Protocol (MCP)** server that connects your AI assistant (like **Claude Desktop**) directly to your **MySQL** database. This server is written in Python, uses `aiomysql` for asynchronous database pooling, and is powered by FastAPI to support both standard STDIO and HTTP-based SSE transports.
+
+---
 
 ## 🚀 Features
 
@@ -47,7 +49,7 @@ Pre-built templates to help the AI perform complex tasks:
 
 ---
 
-## 📦 Installation
+## 📦 Installation & Setup
 
 1.  **Clone the repository:**
     ```bash
@@ -55,58 +57,85 @@ Pre-built templates to help the AI perform complex tasks:
     cd mysql-mcp-server
     ```
 
-2.  **Install dependencies:**
+2.  **Install the dependencies:**
+    Ensure you have Python 3.10+ installed. Install requirements using `pip`:
     ```bash
-    npm install
-    ```
-
-3.  **Build the server:**
-    ```bash
-    npm run build
+    pip install -r requirements.txt
     ```
 
 ---
 
-## ⚙️ Configuration
+## ⚙️ Running the Server
 
-### 1. Environment Variables
-The server uses `mysql2` and requires connection details. You can pass these via environment variables.
+The server can run in two modes:
 
-| Variable | Description | Default |
-| :--- | :--- | :--- |
-| `DB_HOST` | Database hostname | `localhost` |
-| `DB_USER` | Database username | - |
-| `DB_PASSWORD` | Database password | - |
-| `DB_NAME` | Database name | - |
-| `DB_PORT` | Database port | `3306` |
+### Mode 1: STDIO Transport (Local Integration)
+Directly run the script with your database URL as the argument. This is the mode used by desktop clients like Claude Desktop.
+```bash
+python main.py mysql://user:password@localhost:3306/database_name
+```
 
-### 2. Claude Desktop Config
-Add the following to your `claude_desktop_config.json`:
+### Mode 2: SSE Transport (Web / Networked Server via FastAPI)
+Run the FastAPI web server by specifying a port:
+```bash
+python main.py --port 8000 mysql://user:password@localhost:3306/database_name
+```
+Alternatively, you can set the environment variable and run via standard `uvicorn`:
+```bash
+# On Windows (cmd):
+set MYSQL_URL=mysql://user:password@localhost:3306/database_name
+# On Windows (PowerShell):
+$env:MYSQL_URL="mysql://user:password@localhost:3306/database_name"
+# On Linux/macOS:
+export MYSQL_URL="mysql://user:password@localhost:3306/database_name"
 
+uvicorn main:app --host 0.0.0.0 --port 8000
+```
+Visit `http://localhost:8000` to view the server status and connection dashboard.
+
+---
+
+## 🛠️ Claude Desktop Configuration
+
+Add the following block to your `claude_desktop_config.json` depending on your preferred transport:
+
+### Option A: Direct STDIO Connection (No server to run in background)
 ```json
 {
   "mcpServers": {
-    "mysql": {
-      "command": "node",
-      "args": ["/ABSOLUTE/PATH/TO/mysql-mcp-server/dist/index.js"],
-      "env": {
-        "DB_HOST": "localhost",
-        "DB_USER": "root",
-        "DB_PASSWORD": "your_password",
-        "DB_NAME": "your_database",
-        "DB_PORT": "3306"
-      }
+    "mysql-stdio": {
+      "command": "python",
+      "args": [
+        "c:/Users/bhave/OneDrive/Desktop/MySQL MCP Server/main.py",
+        "mysql://user:password@localhost:3306/database_name"
+      ]
     }
   }
 }
 ```
-*Note: Make sure to replace `/ABSOLUTE/PATH/TO/...` with the actual path to your project.*
+*Note: Ensure you use the absolute path to `main.py` on your machine.*
+
+### Option B: Remote SSE Connection (Requires running FastAPI server on port 8000)
+```json
+{
+  "mcpServers": {
+    "mysql-sse": {
+      "command": "python",
+      "args": [
+        "-m",
+        "mcp.client.sse",
+        "http://localhost:8000/sse"
+      ]
+    }
+  }
+}
+```
 
 ---
 
 ## 💡 Usage Examples
 
-Once connected, you can ask Claude questions like:
+Once connected in Claude, you can use queries like:
 
 *   **Exploration**: "What tables are in my database?"
 *   **Schema**: "Show me the schema for the `orders` table."
@@ -120,4 +149,4 @@ Once connected, you can ask Claude questions like:
 This server has powerful capabilities, including write access (`execute-write-query`, `delete-row`, etc.). Always ensure you are connecting to a database where you have appropriate permissions, and be careful when asking the AI to modify data.
 
 ## 📄 License
-ISC
+MIT

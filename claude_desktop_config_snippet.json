@@ -1,10 +1,18 @@
 {
   "mcpServers": {
-    "mysql": {
-      "command": "node",
+    "mysql-stdio": {
+      "command": "python",
       "args": [
-        "c:/Users/bhave/OneDrive/Desktop/MYSQL MCP Server/build/index.js",
-        "mysql://root:root1234@localhost:3306"
+        "c:/Users/bhave/OneDrive/Desktop/MySQL MCP Server/main.py",
+        "mysql://root:root1234@localhost:3306/sqlpractices"
+      ]
+    },
+    "mysql-sse": {
+      "command": "python",
+      "args": [
+        "-m",
+        "mcp.client.sse",
+        "http://localhost:8000/sse"
       ]
     }
   }
